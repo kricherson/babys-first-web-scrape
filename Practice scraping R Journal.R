@@ -2,10 +2,9 @@
 library(rvest)
 library(stringr)
 
+#try out on a page
 testurl<-"https://journal.r-project.org/archive/2017-2/"
-
 testhtml<- read_html(testurl)
-
 articles<-html_nodes(testhtml,'.article')
 
 html_text(articles)
