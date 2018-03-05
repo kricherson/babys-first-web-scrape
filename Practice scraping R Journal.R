@@ -1,26 +1,27 @@
 #scraping example
 library(rvest)
 library(stringr)
-
-#try out on a page
-testurl<-"https://journal.r-project.org/archive/2017-2/"
-testhtml<- read_html(testurl)
-articles<-html_nodes(testhtml,'.article')
-
-html_text(articles)
-html_attrs(articles)
-html_attr(articles, 'href')
+library(tidyr)
 
 
 get_article_info<-function(article_url) #function for scraping info from a page
 {
-  authors<-article_url %>% 
+  relevant_html<-article_url %>% 
     read_html() %>% 
     html_nodes('pre') %>% #bibtex info
-    html_text(.) %>% 
-    str_extract_all(., "author = \\{.*?\\}") %>% #get authors
-    gsub("author = \\{\\s*(.*)}", "\\1", .) #get rid of brackets
+    html_text(.) 
   
+  author_info <- relevant_html %>% 
+    str_extract_all(., "author = \\{.*?\\}") %>% #get authors
+    gsub("author = \\{\\s*(.*)}", "\\1", .) %>%  #get rid of brackets
+    strsplit(.," and ") %>% 
+    `names<-`(c("author")) %>% 
+    as_tibble() %>% 
+    rownames_to_column(var="author_num")
+    mutate(first_name=)
+    
+  
+  return(authors)
 }
 
 scrape_volume<-function(volume_url)
